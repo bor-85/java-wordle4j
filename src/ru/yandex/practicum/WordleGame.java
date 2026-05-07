@@ -16,7 +16,7 @@ import java.util.*;
  */
 public class WordleGame {
     //Константа - количество попыток
-    private final int COUNT_OF_ATTEMPTS = 6;
+    private static final int COUNT_OF_ATTEMPTS = 6;
     //переменная для загаданного слова
     private final String answer;
     //переменная для попыток

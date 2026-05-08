@@ -18,10 +18,10 @@ public class WordleDictionary {
 
     public WordleDictionary(List<String> words, LogWriter logWriter) {
         if (words == null) {
-            throw new IllegalArgumentException("Конструктор WordleDictionary: Словарь не должен быть null");
+            throw new InvalidGameConfigException("Конструктор WordleDictionary: Словарь не должен быть null");
         }
         if (logWriter == null) {
-            throw new IllegalArgumentException("Конструктор WordleDictionary: LogWriter не должен быть null");
+            throw new InvalidGameConfigException("Конструктор WordleDictionary: LogWriter не должен быть null");
         }
         this.allWords = words;
         this.logWriter = logWriter;
@@ -29,13 +29,13 @@ public class WordleDictionary {
     }
 
     //получение слова случайным образом из списка
-    public String getRandomWord(List<String> words) {
+    public String getRandomWord(List<String> words) throws EmptyDictionaryException {
 
         if (words == null) {
-            throw new IllegalArgumentException("Список не должен быть null");
+            throw new InvalidWordFormatException("Список не должен быть null");
         }
         if (words.isEmpty()) {
-            throw new NoSuchElementException("Невозможно сгенерировать слово, пустой список.");
+            throw new EmptyDictionaryException("Невозможно сгенерировать слово, пустой список.");
         }
 
         String word = words.get(random.nextInt(words.size()));
@@ -48,15 +48,15 @@ public class WordleDictionary {
     //Метод, приводящий слово к нужному виду
     public static String normalizeWord(String word) {
         if (word == null) {
-            throw new IllegalArgumentException("Метод normalizeWord: введено пустое слово");
+            throw new InvalidWordFormatException("Метод normalizeWord: введено пустое слово");
         }
         return word.trim().toLowerCase().replace("ё", "е");
     }
 
     //метод, проверяющий присутствие слова в базовом словаре игры
-    public boolean checkWordInDictionary(String word) {
+    public boolean checkWordInDictionary(String word) throws WordNotFoundInDictionaryException {
         if (word == null) {
-            throw new IllegalArgumentException("Метод checkWordInDictionary: введено пустое слово");
+            throw new InvalidWordFormatException("Метод checkWordInDictionary: введено пустое слово");
         }
         boolean check = allWords.contains(word);
         if (!check) {
@@ -68,7 +68,7 @@ public class WordleDictionary {
 
     public String getCompareMask(String word, String answer) {
         if (word == null || answer == null || word.length() != WORD_LENGTH || answer.length() != WORD_LENGTH) {
-            throw new IllegalArgumentException("Параметры метода getCompareMask должны иметь длину " + WORD_LENGTH
+            throw new InvalidWordFormatException("Параметры метода getCompareMask должны иметь длину " + WORD_LENGTH
                     + " символов");
         }
 

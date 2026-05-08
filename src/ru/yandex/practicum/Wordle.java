@@ -1,7 +1,7 @@
 package ru.yandex.practicum;
 
-import java.io.IOException;
-import java.util.NoSuchElementException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Scanner;
 
 /*
@@ -52,8 +52,13 @@ public class Wordle {
                     System.out.println("Поздравляю! Вы угадали слово: " + inputWord);
                 } else {
                     // уменьшаем попытки
+                try{
                     wordleGame.decrementSteps();
-
+                } catch (AttemptsAreOverException e) {
+                    logWriter.log("AttemptsAreOverException: " + e.getMessage());
+                    System.out.println("Попытки закончились.");
+                    break; // выходим из while
+                }
                     // добавляем слово во множество использованных
                     wordleGame.addRepeatWordSet(inputWord);
                     // обновляем маску по введенному слову
@@ -72,25 +77,35 @@ public class Wordle {
             logWriter.log("Игровая сессия закончилась.");
             logWriter.log("-----------------------------------------------------------------------------");
 
-        } catch (IOException e) {
-            logWriter.log("IOException: " + e.getMessage());
-            System.out.println("Ошибка работы с файлом: " + e.getMessage());
+        } catch (EmptyDictionaryException e) {
+            logWriter.log("EmptyDictionaryException: " + e.getMessage());
+            System.out.println("Словарь пуст или не содержит подходящих слов: " + e.getMessage());
 
-        } catch (IllegalArgumentException e) {
-            logWriter.log("IllegalArgumentException: " + e.getMessage());
-            System.out.println("Ошибка ввода данных: " + e.getMessage());
+        } catch (InvalidGameConfigException e) {
+            logWriter.log("InvalidGameConfigException: " + e.getMessage());
+            System.out.println("Ошибка конфигурации игры: " + e.getMessage());
 
-        } catch (IllegalStateException e) {
-            logWriter.log("IllegalStateException: " + e.getMessage());
-            System.out.println("Ошибка состояния игры: " + e.getMessage());
+        } catch (InvalidWordFormatException e) {
+            logWriter.log("InvalidWordFormatException: " + e.getMessage());
+            System.out.println("Ошибка формата слова: " + e.getMessage());
 
-        } catch (NoSuchElementException e) {
-            logWriter.log("NoSuchElementException: " + e.getMessage());
-            System.out.println("Ошибка: недостаточно данных: " + e.getMessage());
+        } catch (DictionaryFileException e) {
+            logWriter.log("DictionaryFileException: " + e.getMessage());
+            System.out.println("Ошибка файла: " + e.getMessage());
+
+        } catch (DictionaryReadException e) {
+            logWriter.log("DictionaryReadException: " + e.getMessage());
+            System.out.println("Ошибка чтения файла: " + e.getMessage());
 
         } catch (Exception e) {
-            logWriter.log("Непредвиденная ошибка: " + e.getMessage());
-            System.out.println("Непредвиденная ошибка: " + e.getMessage());
+            logWriter.log("Exception: " + e.getMessage());
+            System.out.println("Ошибка: " + e.getMessage());
+
+        } catch (Throwable t) {
+            StringWriter stringWriter = new StringWriter();
+            t.printStackTrace(new PrintWriter(stringWriter));
+            logWriter.log("Непредвиденная ошибка:\n" + stringWriter);
+            System.out.println("Непредвиденная ошибка");
         }
     }
 

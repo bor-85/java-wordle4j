@@ -40,13 +40,13 @@ public class WordleGame {
 
     public WordleGame(String answer, WordleDictionary dictionary, LogWriter logWriter) {
         if (answer == null || answer.length() != WordleDictionary.WORD_LENGTH) {
-            throw new IllegalArgumentException("Конструктор WordleGame: Некорректное загаданное слово");
+            throw new InvalidWordFormatException("Конструктор WordleGame: Некорректное загаданное слово");
         }
         if (dictionary == null) {
-            throw new IllegalArgumentException("Конструктор WordleGame: Словарь не должен быть null");
+            throw new InvalidGameConfigException("Конструктор WordleGame: Словарь не должен быть null");
         }
         if (logWriter == null) {
-            throw new IllegalArgumentException("Конструктор WordleGame: LogWriter не должен быть null");
+            throw new InvalidGameConfigException("Конструктор WordleGame: LogWriter не должен быть null");
         }
         this.answer = answer;
         this.steps = COUNT_OF_ATTEMPTS;
@@ -70,10 +70,10 @@ public class WordleGame {
     //метод, который распределяет буквы по множествам для дальнейшей фильтрации слов
     public void wordHandler(String mask, String word) {
         if (mask == null || word == null) {
-            throw new IllegalArgumentException("Метод wordHandler: mask или word == null");
+            throw new InvalidWordFormatException("Метод wordHandler: mask или word == null");
         }
         if (mask.length() != word.length()) {
-            throw new IllegalArgumentException("Метод wordHandler: длины mask и word не совпадают");
+            throw new InvalidWordFormatException("Метод wordHandler: длины mask и word не совпадают");
         }
 
         logWriter.log("Метод wordHandler обрабатывает слово '" + word + "' по маске " + mask);
@@ -114,7 +114,7 @@ public class WordleGame {
     //метод фильтрует список слов по данным из исходной коллекции словаря по мере заполнения коллекций букв
     public void filterWords() {
         if (filteredWords == null) {
-            throw new IllegalStateException("Метод filterWords: Список слов не инициализирован");
+            throw new InvalidGameConfigException("Метод filterWords: Список слов не инициализирован");
         }
         logWriter.log("Метод filterWords начинает работу. Количество слов в словаре до фильтрации: "
                 + filteredWords.size());
@@ -171,9 +171,9 @@ public class WordleGame {
     }
 
     //получаем подсказку из словаря отфильтрованнных слов
-    public String getHelp() {
+    public String getHelp() throws EmptyDictionaryException {
         if (filteredWords == null || filteredWords.isEmpty()) {
-            throw new NoSuchElementException("Метод getHelp: Нет доступных слов для подсказки");
+            throw new EmptyDictionaryException("Метод getHelp: Нет доступных слов для подсказки");
         }
         String advise = dictionary.getRandomWord(filteredWords);
         logWriter.log("Метод getHelp выдает слово-подсказку '" + advise + "' из " + filteredWords.size() + " слов.");
@@ -185,9 +185,9 @@ public class WordleGame {
     }
 
     //уменьшение счетчика попыток
-    public void decrementSteps() {
+    public void decrementSteps() throws AttemptsAreOverException {
         if (steps <= 0) {
-            throw new IllegalStateException("Попытки закончились. Количество меньше 0.");
+            throw new AttemptsAreOverException("Попытки закончились. Количество меньше 0.");
         }
         steps--;
         logWriter.log("Метод decrementSteps уменьшает количество попыток до " + steps);
@@ -196,7 +196,7 @@ public class WordleGame {
     //проверка слова на совпадение с ответом
     public boolean checkAnswer(String word) {
         if (word == null) {
-            throw new IllegalArgumentException("Метод checkAnswer. Слово не должно быть null");
+            throw new InvalidWordFormatException("Метод checkAnswer. Слово не должно быть null");
         }
         boolean check = word.equals(answer);
         logWriter.log("Метод checkAnswer проверил слово '" + word + "' при загаданном слове '" + answer
@@ -211,7 +211,7 @@ public class WordleGame {
     //метод обновляет маску после ввода слова
     public void setWordMask(String word) {
         if (word == null || word.length() != WordleDictionary.WORD_LENGTH) {
-            throw new IllegalArgumentException("Метод setWordMask: Введено пустое слово или длина слова не равна 5");
+            throw new InvalidWordFormatException("Метод setWordMask: Введено пустое слово или длина слова не равна 5");
         }
         wordMask = dictionary.getCompareMask(word, this.answer);
         logWriter.log("Метод setWordMask обновил маску для слова '" + word + "' при загаданном слове '"
@@ -221,7 +221,7 @@ public class WordleGame {
     //добавление слова в исключение, чтобы оно не участвовало в дальнейших ходах в виде подсказки
     public void addRepeatWordSet(String word) {
         if (word == null || word.isEmpty()) {
-            throw new IllegalArgumentException("Метод addRepeatWordSet: Cлово не должно быть пустым");
+            throw new InvalidWordFormatException("Метод addRepeatWordSet: Cлово не должно быть пустым");
         }
         logWriter.log("Метод addRepeatWordSet добавил в исключение слово '" + word + "'.");
         repeatWordSet.add(word);

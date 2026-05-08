@@ -11,7 +11,7 @@ public class LogWriter {
 
     public LogWriter(String filename) {
         if (filename == null || filename.isBlank()) {
-            throw new IllegalArgumentException("Конструктор LogWriter: Имя файла не должно быть пустым");
+            throw new InvalidGameConfigException("Конструктор LogWriter: Имя файла не должно быть пустым");
         }
         this.filename = filename;
     }
@@ -25,7 +25,7 @@ public class LogWriter {
             writer.println(timestamp + " - " + message);
 
         } catch (IOException e) {
-            System.err.println("Ошибка записи в лог: " + e.getMessage());
+            throw new InvalidGameConfigException("Ошибка записи в лог: " + filename);
         }
     }
 }

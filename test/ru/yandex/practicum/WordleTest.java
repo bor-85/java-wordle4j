@@ -32,13 +32,13 @@ class WordleTest {
     //normalizeWord должен выбрасывать исключение если входное слово null
     @Test
     void normalizeWordShouldThrowIfNull() {
-        Assertions.assertThrows(IllegalArgumentException.class,
+        Assertions.assertThrows(InvalidWordFormatException.class,
                 () -> WordleDictionary.normalizeWord(null));
     }
 
     //checkWordInDictionary должен находить слово в словаре если оно есть
     @Test
-    void checkWordInDictionaryShouldReturnTrueIfExists() {
+    void checkWordInDictionaryShouldReturnTrueIfExists() throws WordNotFoundInDictionaryException {
         Assertions.assertTrue(dictionary.checkWordInDictionary("карта"));
     }
 
@@ -58,27 +58,27 @@ class WordleTest {
     //getRandomWord должен выбрасывать исключение если входное слово null
     @Test
     void getRandomWordShouldThrowIfNullList() {
-        Assertions.assertThrows(IllegalArgumentException.class,
+        Assertions.assertThrows(InvalidWordFormatException.class,
                 () -> dictionary.getRandomWord(null));
     }
 
     //getRandomWord должен выбрасывать исключение если словарь пуст
     @Test
     void getRandomWordShouldThrowIfEmptyList() {
-        Assertions.assertThrows(NoSuchElementException.class,
+        Assertions.assertThrows(EmptyDictionaryException.class,
                 () -> dictionary.getRandomWord(Collections.emptyList()));
     }
 
     //getRandomWord должен корректно выдавать слово из списка
     @Test
-    void getRandomWordShouldReturnElementFromList() {
+    void getRandomWordShouldReturnElementFromList() throws EmptyDictionaryException {
         String testWord = dictionary.getRandomWord(testWords);
         Assertions.assertTrue(testWords.contains(testWord), "Слово должно быть из исходного списка");
     }
 
     //getRandomWord должен корректно выдавать слово из списка c 1 элементом
     @Test
-    void getRandomWordShouldReturnSameWordIfSingleElementList() {
+    void getRandomWordShouldReturnSameWordIfSingleElementList() throws EmptyDictionaryException {
         List<String> words = List.of("карта");
         Assertions.assertEquals("карта", dictionary.getRandomWord(words));
     }
@@ -119,18 +119,18 @@ class WordleTest {
     //getCompareMask должен выбрасывать исключение если слово неправильной длины
     @Test
     void getCompareMaskShouldThrowIfWrongLength() {
-        Assertions.assertThrows(IllegalArgumentException.class,
+        Assertions.assertThrows(InvalidWordFormatException.class,
                 () -> dictionary.getCompareMask("кот", "карта"));
-        Assertions.assertThrows(IllegalArgumentException.class,
+        Assertions.assertThrows(InvalidWordFormatException.class,
                 () -> dictionary.getCompareMask("карта", "кот"));
     }
 
     //getCompareMask должен выбрасывать исключение если входные слова пусты
     @Test
     void getCompareMaskShouldThrowIfNullArgs() {
-        Assertions.assertThrows(IllegalArgumentException.class,
+        Assertions.assertThrows(InvalidWordFormatException.class,
                 () -> dictionary.getCompareMask(null, "карта"));
-        Assertions.assertThrows(IllegalArgumentException.class,
+        Assertions.assertThrows(InvalidWordFormatException.class,
                 () -> dictionary.getCompareMask("карта", null));
     }
 
@@ -147,14 +147,14 @@ class WordleTest {
     //WordleDictionaryLoader должен выбрасывать исключение вместо файла null
     @Test
     void constructorShouldThrowWhenFilenameNull() {
-        Assertions.assertThrows(IllegalArgumentException.class,
+        Assertions.assertThrows(InvalidGameConfigException.class,
                 () -> new WordleDictionaryLoader(null, logWriter));
     }
 
     //WordleDictionaryLoader должен выбрасывать исключение если имя файла пустое
     @Test
     void constructorShouldThrowWhenFilenameBlank() {
-        Assertions.assertThrows(IllegalArgumentException.class,
+        Assertions.assertThrows(InvalidGameConfigException.class,
                 () -> new WordleDictionaryLoader("", logWriter));
     }
 
@@ -163,7 +163,7 @@ class WordleTest {
     //checkAnswer должен выбрасывать исключение если имя файла null
     @Test
     void checkAnswerShouldThrowWhenNull() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> wordleGame.checkAnswer(null));
+        Assertions.assertThrows(InvalidWordFormatException.class, () -> wordleGame.checkAnswer(null));
     }
 
     //checkAnswer должен выдавать true на правильное слово
@@ -182,7 +182,7 @@ class WordleTest {
 
     //decrementSteps должен уменьшать число попыток на 1
     @Test
-    void decrementStepsShouldDecreaseSteps() {
+    void decrementStepsShouldDecreaseSteps() throws AttemptsAreOverException {
         //изначальное число выставлено 6
         wordleGame.decrementSteps();
         Assertions.assertEquals(5, wordleGame.getSteps());
@@ -190,7 +190,7 @@ class WordleTest {
 
     //decrementSteps должен выбрасывать исключение, если  количество шагов <=0
     @Test
-    void decrementStepsShouldThrowWhenStepsAlreadyZero() {
+    void decrementStepsShouldThrowWhenStepsAlreadyZero() throws AttemptsAreOverException {
         LogWriter logWriter = new LogWriter("TestLog.txt");
         List<String> testWords = new ArrayList<>(Arrays.asList("карта", "пирог", "метро", "весна"));
         WordleDictionary dictionary = new WordleDictionary(testWords, logWriter);
@@ -199,19 +199,19 @@ class WordleTest {
         for (int i = 0; i < 6; i++) Game.decrementSteps();
         Assertions.assertEquals(0, Game.getSteps());
 
-        Assertions.assertThrows(IllegalStateException.class, ()->Game.decrementSteps());
+        Assertions.assertThrows(AttemptsAreOverException.class, ()->Game.decrementSteps());
     }
 
     //setWordMask должен выбрасывать исключение, если  входное слово null
     @Test
     void setWordMaskShouldThrowWhenNull() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> wordleGame.setWordMask(null));
+        Assertions.assertThrows(InvalidWordFormatException.class, () -> wordleGame.setWordMask(null));
     }
 
     //setWordMask должен выбрасывать исключение, если  входное слово не соответствует длине 5
     @Test
     void setWordMaskShouldThrowWhenWrongLength() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> wordleGame.setWordMask("кот"));
+        Assertions.assertThrows(InvalidWordFormatException.class, () -> wordleGame.setWordMask("кот"));
     }
 
     //setWordMask должен изменять маску слова
@@ -234,26 +234,26 @@ class WordleTest {
     //addRepeatWordSet должен выбрасывать исключение, если  входное слово null
     @Test
     void addRepeatWordSetShouldThrowWhenNull() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> wordleGame.addRepeatWordSet(null));
+        Assertions.assertThrows(InvalidWordFormatException.class, () -> wordleGame.addRepeatWordSet(null));
     }
 
     //addRepeatWordSet должен выбрасывать исключение, если  входное слово пустое
     @Test
     void addRepeatWordSetShouldThrowWhenEmpty() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> wordleGame.addRepeatWordSet(""));
+        Assertions.assertThrows(InvalidWordFormatException.class, () -> wordleGame.addRepeatWordSet(""));
     }
 
     //wordHandler должен выбрасывать исключение, если  входное слово null
     @Test
     void wordHandlerShouldThrowWhenNullArgs() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> wordleGame.wordHandler(null, "карта"));
-        Assertions.assertThrows(IllegalArgumentException.class, () -> wordleGame.wordHandler("+++++", null));
+        Assertions.assertThrows(InvalidWordFormatException.class, () -> wordleGame.wordHandler(null, "карта"));
+        Assertions.assertThrows(InvalidWordFormatException.class, () -> wordleGame.wordHandler("+++++", null));
     }
 
     //wordHandler должен выбрасывать исключение, если  входное слово неправильной длины
     @Test
     void wordHandlerShouldThrowWhenDifferentLengths() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> wordleGame.wordHandler("+++++", "кар"));
+        Assertions.assertThrows(InvalidWordFormatException.class, () -> wordleGame.wordHandler("+++++", "кар"));
     }
 
     //wordHandler должен добавлять несовпавшие буквы в множество серых букв
@@ -397,12 +397,12 @@ class WordleTest {
         }
         wordleGame.filterWords();
 
-        Assertions.assertThrows(NoSuchElementException.class,()-> wordleGame.getHelp());
+        Assertions.assertThrows(EmptyDictionaryException.class,()-> wordleGame.getHelp());
     }
 
     // getHelp должен вернуть подсказку
     @Test
-    void getHelpShouldReturnWordFromFilteredWords() {
+    void getHelpShouldReturnWordFromFilteredWords() throws EmptyDictionaryException {
         LogWriter logWriter = new LogWriter("TestLog.txt");
         List<String> testWords = new ArrayList<>(Arrays.asList("карта", "пирог", "метро", "весна"));
         WordleDictionary dictionary = new WordleDictionary(testWords, logWriter);

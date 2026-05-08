@@ -18,28 +18,28 @@ public class WordleDictionaryLoader {
     private final String filename;
     private final LogWriter logWriter;
 
-    public WordleDictionaryLoader(String filename, LogWriter logWriter) {
+    public WordleDictionaryLoader(String filename, LogWriter logWriter) throws DictionaryFileException {
         if (filename == null || filename.isBlank()) {
-            throw new IllegalArgumentException("Конструктор WordleDictionaryLoader: Имя файла не должно быть пустым");
+            throw new InvalidGameConfigException("Конструктор WordleDictionaryLoader: Имя файла не должно быть пустым");
         }
         if (logWriter == null) {
-            throw new IllegalArgumentException("Конструктор WordleDictionaryLoader: LogWriter не должен быть null");
+            throw new InvalidGameConfigException("Конструктор WordleDictionaryLoader: LogWriter не должен быть null");
         }
         File file = new File(filename);
         if (!file.exists()) {
             logWriter.log("Конструктор WordleDictionaryLoader: Файл словаря не найден " + filename);
-            throw new IllegalArgumentException("Файл словаря не найден: " + filename);
+            throw new DictionaryFileException("Файл словаря не найден: " + filename);
         }
         if (!file.isFile()) {
             logWriter.log("Конструктор WordleDictionaryLoader: По указанному пути находится не файл " + filename);
-            throw new IllegalArgumentException("По указанному пути находится не файл: " + filename);
+            throw new DictionaryFileException("По указанному пути находится не файл: " + filename);
         }
         this.filename = filename;
         this.logWriter = logWriter;
         logWriter.log("Загрузчик словаря создан.");
     }
 
-    public List<String> getWords() throws IOException {
+    public List<String> getWords() throws DictionaryReadException {
         List<String> list = new ArrayList<>();
         String line;
         try (BufferedReader br = new BufferedReader(new FileReader(filename, StandardCharsets.UTF_8))) {
@@ -49,6 +49,8 @@ public class WordleDictionaryLoader {
                     list.add(line);
                 }
             }
+        } catch (IOException e) {
+            throw new DictionaryReadException("Метод getWords - ошибка чтения словаря: " + filename, e);
         }
         logWriter.log("Словарь успешно прогружен, всего слов: " + list.size());
         return list;

@@ -24,13 +24,13 @@ public class WordleGame {
     //исходный словарь
     private final WordleDictionary dictionary;
     //переменная для хранения позиции и буквы, которая была угадана(зеленые буквы "+")
-    private Map<Integer, Character> greenChars = new HashMap<>();
+    private final Map<Integer, Character> greenChars = new HashMap<>();
     //множество для хранения позиции и буквы, которые присутствуют в слове, но на другой позиции(желтые буквы "^")
-    private Map<Integer, Character> yellowChars = new HashMap<>();
+    private final Map<Integer, Character> yellowChars = new HashMap<>();
     //множество для хранения букв, которые осутствуют в слове(серые буквы "-")
-    private Set<Character> greyChars = new HashSet<>();
+    private final Set<Character> greyChars = new HashSet<>();
     //множество для хранения слов, введенных игроком или выданных в качестве подсказки
-    private Set<String> repeatWordSet = new HashSet<>();
+    private final Set<String> repeatWordSet = new HashSet<>();
     //переменная для хранения маски слова
     private String wordMask = "-----";
     //отфильтрованный словарь, состоящий из слов, подходящих под маску и корректируемый по ходу игры
@@ -105,9 +105,9 @@ public class WordleGame {
                     break;
             }
         }
-        logWriter.log("Список зеленых букв(+):" + greenChars.toString());
-        logWriter.log("Список желтых букв(^):" + yellowChars.toString());
-        logWriter.log("Список серых букв(-):" + greyChars.toString());
+        logWriter.log("Список зеленых букв(+):" + greenChars);
+        logWriter.log("Список желтых букв(^):" + yellowChars);
+        logWriter.log("Список серых букв(-):" + greyChars);
         logWriter.log("Метод wordHandler завершил работу");
     }
 
@@ -122,13 +122,11 @@ public class WordleGame {
         List<String> newfilteredWords = new ArrayList<>();
         for (String word : filteredWords) {
             boolean isValid = true;
-            //System.out.println(word);
             // Проверка зеленых букв
             for (Map.Entry<Integer, Character> entry : greenChars.entrySet()) {
                 int pos = entry.getKey();
                 char ch = entry.getValue();
                 if (pos >= word.length() || word.charAt(pos) != ch) {
-                    //System.out.println(" - Не подходит по зеленой букве: " + ch + " на позиции " + pos);
                     isValid = false;
                     break;
                 }

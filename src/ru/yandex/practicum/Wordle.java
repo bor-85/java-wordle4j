@@ -31,12 +31,11 @@ public class Wordle {
 
             while (!match && wordleGame.getSteps() > 0) {
                 System.out.println("Введите слово из 5 букв (или просто нажмите Enter для подсказки):");
-                inputWord = scanner.nextLine();
+                inputWord = WordleDictionary.normalizeWord(scanner.nextLine());
 
-                String helpWord = wordleGame.getHelp();
                 // Если пользователь ввел пустое слово, подставляем подсказку
                 if (inputWord.isEmpty()) {
-                    inputWord = helpWord;
+                    inputWord = wordleGame.getHelp();
                     System.out.println(inputWord + " - Выбран подсказочный вариант");
                 }
                 try {

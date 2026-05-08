@@ -101,7 +101,7 @@ public class WordleDictionary {
             }
         }
         logWriter.log("Метод getCompareMask сформировал маску " +
-                compareMask.toString() + " для слова '" + word +
+                compareMask + " для слова '" + word +
                 "' при загаданном слове '" + answer + "'");
         return compareMask.toString();
 

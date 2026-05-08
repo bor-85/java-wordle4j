@@ -52,13 +52,13 @@ public class Wordle {
                     System.out.println("Поздравляю! Вы угадали слово: " + inputWord);
                 } else {
                     // уменьшаем попытки
-                try{
-                    wordleGame.decrementSteps();
-                } catch (AttemptsAreOverException e) {
-                    logWriter.log("AttemptsAreOverException: " + e.getMessage());
-                    System.out.println("Попытки закончились.");
-                    break; // выходим из while
-                }
+                    try {
+                        wordleGame.decrementSteps();
+                    } catch (AttemptsAreOverException e) {
+                        logWriter.log("AttemptsAreOverException: " + e.getMessage());
+                        System.out.println("Попытки закончились.");
+                        break; // выходим из while
+                    }
                     // добавляем слово во множество использованных
                     wordleGame.addRepeatWordSet(inputWord);
                     // обновляем маску по введенному слову
